@@ -15,6 +15,3 @@ vendor/
 .env.test.local
 .env.production.local
 
-# .terraform directories
-**/.terraform/*
-terraform/.terraform/
