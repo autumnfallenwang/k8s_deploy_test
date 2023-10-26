@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "smtpyaml.fullname" . }}-smtp4dev
+  labels:
+  {{- include "smtpyaml.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.smtp4Dev.type }}
+  selector:
+    app: smtp4dev
+  {{- include "smtpyaml.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.smtp4Dev.ports | toYaml | nindent 2 -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "smtpyaml.fullname" . }}-smtp4dev
+  labels:
+    app: smtp4dev
+  {{- include "smtpyaml.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.smtp4Dev.replicas }}
+  selector:
+    matchLabels:
+      app: smtp4dev
+    {{- include "smtpyaml.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: smtp4dev
+      {{- include "smtpyaml.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.smtp4Dev.smtp4Dev.image.repository }}:{{ .Values.smtp4Dev.smtp4Dev.image.tag
+          | default .Chart.AppVersion }}
+        name: smtp4dev
+        ports:
+        - containerPort: 80
+        - containerPort: 25
+        resources: {}

@@ -1,0 +1,17 @@
+kubernetesClusterDomain: cluster.local
+smtp4Dev:
+  ports:
+  - name: smtp
+    port: 25
+    protocol: TCP
+    targetPort: 25
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  replicas: 1
+  smtp4Dev:
+    image:
+      repository: rnwood/smtp4dev
+      tag: latest
+  type: ClusterIP
